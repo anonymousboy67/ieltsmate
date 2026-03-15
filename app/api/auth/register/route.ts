@@ -47,8 +47,10 @@ export async function POST(req: NextRequest) {
 
     // Seed the word bank if empty (first user registration triggers seeding)
     const wordCount = await DailyWord.countDocuments()
-    if (wordCount === 0) {
-      await DailyWord.insertMany(WORD_BANK)
+    if (wordCount < WORD_BANK.length) {
+      await DailyWord.insertMany(WORD_BANK, { ordered: false }).catch(() => {
+        // Ignore duplicate key errors — words already seeded
+      })
     }
 
     return NextResponse.json({

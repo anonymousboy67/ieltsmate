@@ -4,7 +4,11 @@ import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Eye, EyeOff, Loader2, Check } from "lucide-react"
+import {
+  Eye, EyeOff, Loader2, Check,
+  BookOpen, Rocket, Flame, Star,
+  TrendingUp, Mail, Lock, User, School,
+} from "lucide-react"
 
 const cardStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.12)",
@@ -79,7 +83,7 @@ export default function SignupPage() {
           }}>
             <Check style={{ width: 36, height: 36, color: "white" }} />
           </div>
-          <h2 style={{ color: "white", fontWeight: 900, fontSize: 26, margin: "0 0 8px" }}>You&apos;re in! 🎉</h2>
+          <h2 style={{ color: "white", fontWeight: 900, fontSize: 26, margin: "0 0 8px" }}>You&apos;re in!</h2>
           <p style={{ color: "rgba(255,255,255,0.7)", fontWeight: 600, fontSize: 14, margin: 0 }}>Redirecting to your dashboard...</p>
         </div>
       </div>
@@ -96,8 +100,10 @@ export default function SignupPage() {
           background: "rgba(255,255,255,0.2)",
           border: "1px solid rgba(255,255,255,0.3)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 22, boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-        }}>📚</div>
+          boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+        }}>
+          <BookOpen style={{ width: 22, height: 22, color: "white" }} />
+        </div>
         <span style={{ color: "white", fontWeight: 900, fontSize: 22, letterSpacing: "-0.4px" }}>IELTSmate</span>
       </div>
 
@@ -109,32 +115,33 @@ export default function SignupPage() {
             background: "rgba(255,255,255,0.15)",
             border: "2px solid rgba(255,255,255,0.22)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 54,
             boxShadow: "0 8px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2)",
           }}>
-            🚀
+            <Rocket style={{ width: 48, height: 48, color: "white" }} />
           </div>
           {/* Floating badge: streak */}
           <div className="badge-pop" style={{
-            position: "absolute", top: -6, left: -62,
+            position: "absolute", top: -6, left: -72,
             background: "white", borderRadius: 50,
             padding: "5px 12px", fontSize: 12, fontWeight: 800,
             color: "#166534",
             boxShadow: "0 6px 20px rgba(0,0,0,0.18)",
-            whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 4,
+            whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 5,
           }}>
-            🔥 7 day streak
+            <Flame style={{ width: 13, height: 13, color: "#f97316" }} />
+            7 day streak
           </div>
           {/* Floating badge: band */}
           <div className="badge-pop-delay" style={{
-            position: "absolute", bottom: -6, right: -52,
+            position: "absolute", bottom: -6, right: -58,
             background: "white", borderRadius: 50,
             padding: "5px 12px", fontSize: 12, fontWeight: 800,
             color: "#16a34a",
             boxShadow: "0 6px 20px rgba(0,0,0,0.18)",
-            whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 4,
+            whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 5,
           }}>
-            ⭐ Band 7.0
+            <Star style={{ width: 13, height: 13, color: "#eab308", fill: "#eab308" }} />
+            Band 7.0
           </div>
         </div>
       </div>
@@ -152,8 +159,8 @@ export default function SignupPage() {
       {/* ── 4. Feature pills ── */}
       <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
         {[
-          { emoji: "📈", title: "Track Progress", sub: "Band history" },
-          { emoji: "📚", title: "Vocabulary", sub: "200 IELTS words" },
+          { icon: <TrendingUp style={{ width: 20, height: 20, color: "white" }} />, title: "Track Progress", sub: "Band history" },
+          { icon: <BookOpen style={{ width: 20, height: 20, color: "white" }} />, title: "Vocabulary", sub: "200 IELTS words" },
         ].map((f) => (
           <div key={f.title} style={{
             flex: 1,
@@ -163,7 +170,7 @@ export default function SignupPage() {
             padding: "10px 12px",
             display: "flex", alignItems: "center", gap: 9,
           }}>
-            <span style={{ fontSize: 22, lineHeight: 1 }}>{f.emoji}</span>
+            <span style={{ lineHeight: 1, flexShrink: 0 }}>{f.icon}</span>
             <div>
               <p style={{ color: "white", fontWeight: 700, fontSize: 13, margin: 0, lineHeight: 1.3 }}>{f.title}</p>
               <p style={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, fontSize: 11, margin: 0, lineHeight: 1.3 }}>{f.sub}</p>
@@ -190,7 +197,7 @@ export default function SignupPage() {
 
         {/* Full name */}
         <div style={{ position: "relative" }}>
-          <span style={{ position: "absolute", left: 17, top: "50%", transform: "translateY(-50%)", fontSize: 18, pointerEvents: "none", userSelect: "none", lineHeight: 1 }}>👤</span>
+          <User style={{ position: "absolute", left: 17, top: "50%", transform: "translateY(-50%)", width: 18, height: 18, color: "rgba(255,255,255,0.65)", pointerEvents: "none" }} />
           <input
             name="name"
             type="text"
@@ -206,7 +213,7 @@ export default function SignupPage() {
 
         {/* Email */}
         <div style={{ position: "relative" }}>
-          <span style={{ position: "absolute", left: 17, top: "50%", transform: "translateY(-50%)", fontSize: 18, pointerEvents: "none", userSelect: "none", lineHeight: 1 }}>📧</span>
+          <Mail style={{ position: "absolute", left: 17, top: "50%", transform: "translateY(-50%)", width: 18, height: 18, color: "rgba(255,255,255,0.65)", pointerEvents: "none" }} />
           <input
             name="email"
             type="email"
@@ -222,7 +229,7 @@ export default function SignupPage() {
 
         {/* Password */}
         <div style={{ position: "relative" }}>
-          <span style={{ position: "absolute", left: 17, top: "50%", transform: "translateY(-50%)", fontSize: 18, pointerEvents: "none", userSelect: "none", lineHeight: 1 }}>🔒</span>
+          <Lock style={{ position: "absolute", left: 17, top: "50%", transform: "translateY(-50%)", width: 18, height: 18, color: "rgba(255,255,255,0.65)", pointerEvents: "none" }} />
           <input
             name="password"
             type={showPassword ? "text" : "password"}
@@ -246,7 +253,7 @@ export default function SignupPage() {
 
         {/* Class code */}
         <div style={{ position: "relative" }}>
-          <span style={{ position: "absolute", left: 17, top: "50%", transform: "translateY(-50%)", fontSize: 18, pointerEvents: "none", userSelect: "none", lineHeight: 1 }}>🏫</span>
+          <School style={{ position: "absolute", left: 17, top: "50%", transform: "translateY(-50%)", width: 18, height: 18, color: "rgba(255,255,255,0.65)", pointerEvents: "none" }} />
           <input
             name="classCode"
             type="text"
