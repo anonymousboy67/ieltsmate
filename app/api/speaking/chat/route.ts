@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 
+
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 // System prompt for the IELTS examiner — calibrated for authentic exam behaviour
@@ -89,39 +90,15 @@ export async function POST(req: NextRequest) {
       systemPrompt += `\n\nCURRENT CUE CARD FOR PART 2:\n"${card.topic}"\nPoints to cover:\n${card.points.map((p, i) => `${i + 1}. ${p}`).join("\n")}`
     }
 
-    // Stream the response back to the client
-    const stream = await anthropic.messages.create({
+    const response = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
       max_tokens: 300,
       system: systemPrompt,
       messages: claudeMessages,
-      stream: true,
     })
 
-    // Create a ReadableStream to pipe the SSE response
-    const encoder = new TextEncoder()
-    const readable = new ReadableStream({
-      async start(controller) {
-        for await (const event of stream) {
-          if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-            const data = JSON.stringify({ text: event.delta.text })
-            controller.enqueue(encoder.encode(`data: ${data}\n\n`))
-          }
-          if (event.type === "message_stop") {
-            controller.enqueue(encoder.encode("data: [DONE]\n\n"))
-            controller.close()
-          }
-        }
-      },
-    })
-
-    return new Response(readable, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-      },
-    })
+    const text = response.content[0]?.type === "text" ? response.content[0].text : ""
+    return NextResponse.json({ text })
   } catch (error) {
     console.error("Speaking chat error:", error)
     return NextResponse.json({ error: "Failed to get examiner response" }, { status: 500 })

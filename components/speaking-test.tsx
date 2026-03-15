@@ -77,7 +77,6 @@ declare global {
 export function SpeakingTest() {
   const [phase, setPhase] = useState<TestPhase>("intro")
   const [messages, setMessages] = useState<Message[]>([])
-  const [examinerText, setExaminerText] = useState("")
   const [isExaminerTalking, setIsExaminerTalking] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [transcript, setTranscript] = useState("")
@@ -92,6 +91,7 @@ export function SpeakingTest() {
   const [voiceEnabled, setVoiceEnabled] = useState(true)
   const [cueCardIndex] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [examinerText] = useState("") // kept for render compat
 
   const recognitionRef = useRef<SpeechRecognitionType | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -129,9 +129,6 @@ export function SpeakingTest() {
     setMessages(newMessages)
     setLoading(true)
 
-    let fullResponse = ""
-    setExaminerText("")
-
     try {
       const res = await fetch("/api/speaking/chat", {
         method: "POST",
@@ -139,36 +136,12 @@ export function SpeakingTest() {
         body: JSON.stringify({ messages: newMessages, part, cueCardIndex }),
       })
 
-      if (!res.body) throw new Error("No stream")
+      if (!res.ok) throw new Error("API error")
 
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value)
-        const lines = chunk.split("\n")
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const data = line.slice(6)
-            if (data === "[DONE]") break
-            try {
-              const parsed = JSON.parse(data)
-              if (parsed.text) {
-                fullResponse += parsed.text
-                setExaminerText(fullResponse)
-              }
-            } catch { /* ignore malformed chunks */ }
-          }
-        }
-      }
-
-      const assistantMsg: Message = { role: "assistant", content: fullResponse }
+      const { text } = await res.json()
+      const assistantMsg: Message = { role: "assistant", content: text }
       setMessages([...newMessages, assistantMsg])
-      setExaminerText("")
-      speak(fullResponse)
+      speak(text)
     } catch (err) {
       console.error("Examiner error:", err)
     } finally {
@@ -334,7 +307,6 @@ export function SpeakingTest() {
   function resetTest() {
     setPhase("intro")
     setMessages([])
-    setExaminerText("")
     setPart1Transcript("")
     setPart2Transcript("")
     setPart3Transcript("")
